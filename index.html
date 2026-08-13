@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
 <meta charset="utf-8">
@@ -8,174 +8,169 @@
 <style>
   :root{
     --bg:#eef1f5; --card:#fff; --line:#dbe0e6; --txt:#1f2328; --muted:#6b7280;
-    --gold:#c9a227; --gold-soft:#fff8e1; --blue-soft:#eaf3fd; --blue-line:#cfe3fa;
+    --gold:#c9a227; --gold-soft:#fff8e1; --gold-line:#f0e0a8;
+    --blue-soft:#eaf3fd; --blue-line:#cfe3fa;
     --green:#0f7b3f; --green-soft:#e7f6ec; --green-line:#bfe3cc;
+    --entrada:#fffdf3;
   }
   *{box-sizing:border-box}
   html,body{height:100%}
-  body{margin:0;padding:10px;background:var(--bg);color:var(--txt);overflow:hidden;
-       font:16px/1.35 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;
+  body{margin:0;padding:10px;background:var(--bg);color:var(--txt);overflow:auto;
+       font:15px/1.35 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;
        display:flex;flex-direction:column;gap:8px}
 
   /* ---------- topo ---------- */
-  header{display:flex;align-items:center;gap:16px;flex-wrap:wrap;padding:0 4px}
+  header{display:flex;align-items:center;gap:14px;flex-wrap:wrap;padding:0 4px}
   header h1{font-size:17px;margin:0;white-space:nowrap}
-  header .sub{color:var(--muted);font-size:12px;flex:1;min-width:120px}
-  .cfg{display:flex;align-items:center;gap:6px 10px;flex-wrap:wrap;font-size:12px;color:var(--muted)}
-  .cfg label{display:inline;margin:0;font-size:12px;font-weight:600;color:var(--muted);white-space:nowrap}
-  .cfg input{width:64px;padding:5px 6px;font-size:13px;font-weight:600;text-align:right;
-             border:1px solid var(--line);border-radius:6px;background:#fff}
+  header .sub{color:var(--muted);font-size:12px}
+  header .dir{margin-left:auto;display:flex;align-items:center;gap:6px 12px;flex-wrap:wrap;
+              font-size:12px;color:var(--muted)}
+  header .dir label{font-weight:600;white-space:nowrap}
+  header .dir input{width:62px;padding:4px 6px;font-size:13px;font-weight:600;text-align:right;
+                    border:1px solid var(--line);border-radius:6px;background:#fff}
 
-  /* ---------- grade principal ---------- */
-  main{min-height:0;display:grid;gap:10px;align-items:start;
-       grid-template-columns:minmax(220px,1fr) minmax(340px,1.4fr) minmax(260px,1fr)}
-  .col{display:flex;flex-direction:column;gap:10px;min-height:0}
-  .card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:10px;
-        display:flex;flex-direction:column;min-height:0}
-  .card h2{font-size:11px;text-transform:uppercase;letter-spacing:.6px;color:var(--muted);
-           margin:0 0 8px;display:flex;gap:6px;align-items:center}
-  .card h2 b{color:var(--gold)}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:10px}
 
-  /* ---------- entradas ---------- */
-  .field{margin-bottom:10px}
-  .field:last-child{margin-bottom:0}
-  label{display:block;font-size:12px;font-weight:700;margin-bottom:4px}
-  input[type=text].big{width:100%;padding:7px 10px;font-size:clamp(18px,1.8vw,24px);font-weight:700;
-       text-align:right;border:2px dashed #c8ced6;border-radius:8px;background:#fffdf5;outline:none}
-  input[type=text].big:focus{border-style:solid;border-color:var(--gold);background:#fffbea}
-  input[type=text].big:not(:placeholder-shown){border-style:solid;border-color:var(--gold)}
-  input::placeholder{color:#b6bcc5;font-weight:500;font-size:14px;font-style:italic}
-  .hint{font-size:11px;color:var(--muted);margin-top:4px;line-height:1.3}
-  .aviso{font-size:12px;color:#8a6a00;background:var(--gold-soft);border:1px dashed #e6d493;
-         border-radius:8px;padding:8px 10px;line-height:1.35}
+  /* ---------- planilha ---------- */
+  .rolagem{overflow-x:auto}
+  table.grade{width:100%;border-collapse:separate;border-spacing:0;font-size:14px;
+              font-variant-numeric:tabular-nums}
+  table.grade th,table.grade td{padding:5px 8px;border-bottom:1px solid #edf0f3;text-align:right;
+                                white-space:nowrap}
+  table.grade thead th{position:sticky;top:0}
+  /* faixa dos grupos 1 / 2 / 3 */
+  table.grade .grupo th{font-size:11px;letter-spacing:.6px;text-transform:uppercase;font-weight:800;
+            padding:6px 8px;text-align:left;border-bottom:0}
+  .grupo th b{display:inline-block;width:16px;height:16px;line-height:16px;text-align:center;
+              border-radius:50%;font-size:10px;margin-right:5px;color:#fff}
+  .g1{background:var(--gold-soft);color:#7a5c00}      .g1 b{background:var(--gold)}
+  .g2{background:var(--blue-soft);color:#0b4f8f}      .g2 b{background:#2f80d8}
+  .g3{background:var(--green-soft);color:#0b5c30}     .g3 b{background:var(--green)}
+  .sub th{font-size:10px;text-transform:uppercase;letter-spacing:.4px;color:var(--muted);
+          font-weight:700;border-bottom:1px solid var(--line);background:#fafbfc}
+  .sub th.c1{background:#fffcf0} .sub th.c2{background:#f5faff} .sub th.c3{background:#f4fbf6}
 
-  .chips{display:flex;flex-wrap:wrap;gap:6px}
-  .chip{padding:6px 12px;border:2px solid var(--line);border-radius:999px;background:#fff;
-        font-size:14px;font-weight:700;cursor:pointer;user-select:none;white-space:nowrap}
-  .chip:hover{border-color:#c3c9d1}
-  .chip.on{border-color:var(--gold);background:var(--gold-soft);color:#7a5c00}
-  .chip.sm{font-size:12px;padding:4px 10px;font-weight:600}
+  td.c1{background:#fffdf7} td.c2{background:#fafcff} td.c3{background:#fafdfb}
+  td.idx{text-align:center;color:#aeb4bd;font-size:12px;font-weight:700;background:#fff}
+  td.destaque{font-weight:800;color:#8a6a00}
+  td.acao{font-weight:800;color:var(--green)}
+  td.vazio{color:#c3c8d0}
 
-  /* ---------- saídas ---------- */
-  .tiles{display:grid;grid-template-columns:1fr 1fr;gap:8px;min-height:0}
-  .out{background:var(--blue-soft);border:1px solid var(--blue-line);border-radius:8px;padding:7px 10px;
-       display:flex;flex-direction:column;justify-content:center;min-height:0}
-  .out .k{font-size:10px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.4px}
-  .out .v{font-size:clamp(20px,2.1vw,28px);font-weight:800;line-height:1.1;margin:1px 0;
-          font-variant-numeric:tabular-nums}
-  .out .u{font-size:10px;color:var(--muted);font-weight:600}
-  .out.hero{background:var(--gold-soft);border-color:#f0e0a8}
-  .out.hero .v{color:#8a6a00}
-  .out.acao{background:var(--green-soft);border-color:var(--green-line)}
-  .out.acao .v{color:var(--green)}
-  .out.warn{background:#fff4f4;border-color:#f3c9c9}
-  .out.warn .v{color:#b02020;font-size:13px;font-weight:600;line-height:1.3}
-  /* estado sem cálculo: aviso no lugar do número, para não parecer valor que não carregou */
-  .out.vazio{background:#f4f6f8;border:1px dashed #dde2e8}
-  .out.vazio .k,.out.vazio .u{color:#aeb4bd}
-  .out.vazio .v{font-size:12px;font-weight:600;color:#aeb4bd;font-style:italic}
+  table.grade input, table.grade select{
+    width:100%;padding:5px 7px;font-size:15px;font-weight:700;text-align:right;
+    border:1px dashed #c8ced6;border-radius:6px;background:var(--entrada);outline:none;
+    font-variant-numeric:tabular-nums;color:inherit}
+  table.grade input:focus,table.grade select:focus{border-style:solid;border-color:var(--gold);
+    box-shadow:0 0 0 2px rgba(201,162,39,.18)}
+  table.grade input.preenchido{border-style:solid;border-color:var(--gold-line)}
+  table.grade input::placeholder{color:#b6bcc5;font-weight:500;font-style:italic;font-size:12px}
+  table.grade select{text-align:left;border-style:solid;border-color:var(--gold-line);
+                     background:#fffdf3;cursor:pointer}
+  td.entrada{width:104px}
+  td.alvo{width:86px}
 
-  /* ---------- tabela ---------- */
-  table{width:100%;border-collapse:collapse;font-size:13px}
-  th,td{padding:4px 6px;border-bottom:1px solid #eef0f3;text-align:right}
-  th:first-child,td:first-child{text-align:left}
-  th{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.4px}
-  tr.hit td{background:var(--gold-soft);font-weight:800}
-  tr:last-child td{border-bottom:0}
+  .tag{font-size:9px;font-weight:800;letter-spacing:.4px;text-transform:uppercase;
+       padding:1px 5px;border-radius:999px;margin-right:5px;vertical-align:2px}
+  .tag.fino{background:var(--gold-soft);color:#7a5c00;border:1px solid var(--gold-line)}
+  .tag.liga{background:var(--green-soft);color:var(--green);border:1px solid var(--green-line)}
 
-  /* ---------- responsivo ---------- */
-  @media(max-width:1000px){
-    body{overflow:auto;height:auto}
-    main{grid-template-columns:1fr}
-  }
-  @media(max-height:600px){
-    .out .v{font-size:20px}
-    input[type=text].big{font-size:18px;padding:6px 9px}
-    .card{padding:8px}
-  }
+  tr.suspeita td.c2{background:#fff4f4}
+  .alerta{display:inline-block;width:15px;height:15px;line-height:15px;text-align:center;
+          border-radius:50%;background:#b02020;color:#fff;font-size:10px;font-weight:800;
+          margin-right:5px;cursor:help}
+
+  tfoot td{border-top:2px solid var(--line);border-bottom:0;font-weight:800;
+           background:#f7f9fb;padding-top:7px}
+  tfoot td.rotulo{text-align:right;font-size:11px;text-transform:uppercase;letter-spacing:.4px;
+                  color:var(--muted);font-weight:700}
+
+  .btn{border:1px solid var(--line);background:#fff;border-radius:7px;padding:5px 12px;
+       font-size:13px;font-weight:700;cursor:pointer;color:var(--txt)}
+  .btn:hover{border-color:var(--gold);background:var(--gold-soft)}
+  .btn.x{padding:2px 7px;font-size:14px;color:#aeb4bd;border-color:transparent;background:none}
+  .btn.x:hover{color:#b02020;background:#fff4f4;border-color:#f3c9c9}
+  .barra{display:flex;align-items:center;gap:10px;margin-top:9px;flex-wrap:wrap}
+  .hint{font-size:11px;color:var(--muted);line-height:1.35}
+
+  /* ---------- rodapé: referência ---------- */
+  .rodape{max-width:560px;display:flex;flex-direction:column;gap:10px}
+  .rodape h2{font-size:11px;text-transform:uppercase;letter-spacing:.6px;color:var(--muted);
+             margin:0 0 8px}
+  table.ref{width:100%;border-collapse:collapse;font-size:13px;font-variant-numeric:tabular-nums}
+  table.ref th,table.ref td{padding:3px 6px;border-bottom:1px solid #eef0f3;text-align:right}
+  table.ref th:first-child,table.ref td:first-child{text-align:left}
+  table.ref th{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.4px}
+  table.ref tr:last-child td{border-bottom:0}
 </style>
 </head>
 <body>
 
 <header>
   <h1>Teor de Ouro</h1>
-  <span class="sub">Pesagem hidrostática · densidade → teor → correção de liga</span>
-  <div class="cfg">
+  <span class="sub">Pesagem hidrostática · uma linha por peça</span>
+  <div class="dir">
     <label for="dAu">Densidade do ouro puro (g/cm³)</label><input type="text" id="dAu" value="19,32">
     <label for="dLiga">Densidade da liga (g/cm³)</label><input type="text" id="dLiga" value="9,5">
   </div>
 </header>
 
-<main>
-
-  <!-- COLUNA 1 — ENTRADAS -->
-  <div class="col">
-    <div class="card">
-      <h2><b>1</b> Pesagem — digite os dois valores</h2>
-      <div class="field">
-        <label for="seco">Digite o peso seco (g)</label>
-        <input type="text" id="seco" class="big" inputmode="decimal" placeholder="ex.: 8,49">
-        <div class="hint">Peça fora da água, na balança.</div>
-      </div>
-      <div class="field">
-        <label id="lb2" for="emp">Digite o empuxo (g)</label>
-        <input type="text" id="emp" class="big" inputmode="decimal" placeholder="ex.: 0,607">
-        <div class="chips" style="margin-top:7px">
-          <span class="chip sm on" data-modo="empuxo">Empuxo</span>
-          <span class="chip sm" data-modo="agua">Peso na água</span>
-        </div>
-        <div class="hint" id="hint2">Empuxo = peso seco − peso submerso.</div>
-      </div>
-    </div>
-
-    <div class="card">
-      <h2>Referência</h2>
-      <table>
-        <thead><tr><th>Quilate</th><th>Teor</th><th>Densidade</th></tr></thead>
-        <tbody id="tabela"></tbody>
-      </table>
-    </div>
+<div class="card">
+  <div class="rolagem">
+    <table class="grade">
+      <thead>
+        <tr class="grupo">
+          <th style="background:#fff"></th>
+          <th class="g1" colspan="2"><b>1</b>Pesagem — digite os valores</th>
+          <th class="g2" colspan="4"><b>2</b>Resultado da peça</th>
+          <th class="g3" colspan="3"><b>3</b>Teor desejado</th>
+          <th style="background:#fff"></th>
+        </tr>
+        <tr class="sub">
+          <th style="background:#fafbfc"></th>
+          <th class="c1">Peso seco (g)</th>
+          <th class="c1">Empuxo (g)</th>
+          <th class="c2">Densidade</th>
+          <th class="c2">Teor (%)</th>
+          <th class="c2">Quilates</th>
+          <th class="c2">Ouro fino (g)</th>
+          <th class="c3">Alvo</th>
+          <th class="c3">Adicionar (g)</th>
+          <th class="c3">Peso final (g)</th>
+          <th style="background:#fafbfc"></th>
+        </tr>
+      </thead>
+      <tbody id="linhas"></tbody>
+    </table>
   </div>
-
-  <!-- COLUNA 2 — RESULTADO -->
-  <div class="col">
-    <div class="card">
-      <h2><b>2</b> Resultado da peça</h2>
-      <div class="aviso" id="avisoCalc" style="margin-bottom:10px">
-        Preencha o peso seco e o empuxo ao lado — o cálculo aparece aqui na hora.
-      </div>
-      <div class="tiles">
-        <div class="out"><div class="k">Densidade</div><div class="v" id="dens">—</div><div class="u">g/cm³</div></div>
-        <div class="out hero"><div class="k">Teor estimado</div><div class="v" id="teor">—</div><div class="u">% de ouro</div></div>
-        <div class="out hero"><div class="k">Quilates</div><div class="v" id="quil">—</div><div class="u">k</div></div>
-        <div class="out"><div class="k">Ouro fino atual</div><div class="v" id="fino">—</div><div class="u">gramas</div></div>
-      </div>
-      <div id="alerta" class="out warn" style="display:none;margin-top:10px">
-        <div class="k">Atenção</div><div class="v" id="alertaTxt"></div>
-      </div>
-    </div>
+  <div class="barra">
+    <button class="btn" id="addLinha">+ Adicionar linha</button>
+    <button class="btn" id="limpar">Limpar tudo</button>
+    <span class="hint">Empuxo = peso seco − peso submerso. Linhas em branco são ignoradas.</span>
   </div>
+</div>
 
-  <!-- COLUNA 3 — CORREÇÃO -->
-  <div class="col">
-    <div class="card">
-      <h2><b>3</b> Teor desejado</h2>
-      <div class="chips" id="chips"></div>
-      <div style="display:flex;align-items:center;gap:8px;margin:8px 0 12px">
-        <span class="hint" style="margin:0">ou %:</span>
-        <input type="text" id="pctCustom" inputmode="decimal" placeholder="ex: 60"
-               style="width:80px;padding:6px 8px;font-size:15px;font-weight:700;text-align:right;
-                      border:2px solid var(--line);border-radius:8px;outline:none">
-      </div>
-      <div class="tiles" style="grid-template-columns:1fr">
-        <div class="out acao"><div class="k" id="acaoK">Adicionar</div><div class="v" id="acaoV">—</div><div class="u">gramas</div></div>
-        <div class="out"><div class="k">Peso final da peça</div><div class="v" id="pesoFinal">—</div><div class="u">gramas</div></div>
-      </div>
-      <div class="hint" id="explica" style="margin-top:8px"></div>
-    </div>
+<div class="rodape">
+  <div class="card">
+    <h2>Referência</h2>
+    <table class="ref">
+      <thead><tr><th>Quilate</th><th>Teor</th><th>Densidade</th></tr></thead>
+      <tbody id="tabela"></tbody>
+    </table>
   </div>
-
-</main>
+  <div class="card">
+    <h2>Como usar</h2>
+    <p class="hint">
+      <b>1.</b> Informe o peso seco e o empuxo (peso seco menos o peso da peça submersa).<br>
+      <b>2.</b> Densidade, teor, quilate e ouro fino saem na hora.<br>
+      <b>3.</b> Escolha o quilate desejado: se for maior que o atual, a coluna mostra quanto de
+      <b>ouro fino</b> adicionar; se for menor, quanto de <b>liga</b>.
+    </p>
+    <p class="hint" style="margin-top:9px">
+      O teor estimado depende da <b>densidade da liga</b> (padrão 9,5), que varia com a composição.
+      Calibre uma vez com uma peça de teor conhecido: ajuste o campo até o teor calculado bater com o real.
+    </p>
+  </div>
+</div>
 
 <script>
 const K = [
@@ -188,140 +183,122 @@ const K = [
   {k:12, p:50},
   {k:10, p:41.66},
 ];
-const CHIPS = [22,18,16,14,12];
+const ALVOS = [24,22,18,16,14,12,10];
+const LINHAS_PADRAO = 5;
 
 const $ = id => document.getElementById(id);
 const num = v => { const n = parseFloat(String(v).replace(/\s/g,'').replace(',','.')); return isFinite(n) ? n : NaN; };
-const fmt = (n,d=2) => isFinite(n) ? n.toLocaleString('pt-BR',{minimumFractionDigits:d,maximumFractionDigits:d}) : '—';
+const fmt = (n,d=2) => isFinite(n) ? n.toLocaleString('pt-BR',{minimumFractionDigits:d,maximumFractionDigits:d}) : '';
 
-let modo = 'empuxo';
+const teorPorDensidade = (d,dAu,dLiga) => ((1/dLiga - 1/d) / (1/dLiga - 1/dAu)) * 100;
+const densidadePorTeor = (p,dAu,dLiga) => 1 / ((p/100)/dAu + (1-p/100)/dLiga);
 
-// chips de quilate
-CHIPS.forEach(k=>{
-  const c = document.createElement('span');
-  c.className = 'chip' + (k===18?' on':'');
-  c.textContent = k + 'k';
-  c.dataset.k = k;
-  c.onclick = ()=>{
-    document.querySelectorAll('#chips .chip').forEach(x=>x.classList.remove('on'));
-    c.classList.add('on');
-    $('pctCustom').value = '';
-    calc();
-  };
-  $('chips').appendChild(c);
-});
+let contador = 0;
 
-// alternar empuxo / peso na água
-document.querySelectorAll('.chip[data-modo]').forEach(c=>{
-  c.onclick = ()=>{
-    document.querySelectorAll('.chip[data-modo]').forEach(x=>x.classList.remove('on'));
-    c.classList.add('on');
-    modo = c.dataset.modo;
-    $('lb2').textContent = modo==='empuxo' ? 'Empuxo (g)' : 'Peso na água (g)';
-    $('hint2').textContent = modo==='empuxo'
-      ? 'Empuxo = peso seco − peso submerso.'
-      : 'Peça submersa em água. O empuxo é calculado automaticamente.';
-    $('emp').placeholder = modo==='empuxo' ? '0,607' : '7,883';
-    calc();
-  };
-});
-
-function teorPorDensidade(d, dAu, dLiga){
-  // modelo de mistura por volume: 1/d = x/dAu + (1-x)/dLiga
-  return ((1/dLiga - 1/d) / (1/dLiga - 1/dAu)) * 100;
-}
-function densidadePorTeor(p, dAu, dLiga){
-  const x = p/100;
-  return 1 / (x/dAu + (1-x)/dLiga);
+function novaLinha(){
+  contador++;
+  // só a primeira linha leva exemplo no placeholder; repetido em todas vira ruído
+  const ex = $('linhas').rows.length === 0;
+  const tr = document.createElement('tr');
+  tr.innerHTML = `
+    <td class="idx">${contador}</td>
+    <td class="c1 entrada"><input type="text" data-f="seco" inputmode="decimal" placeholder="${ex?'ex.: 8,49':''}"></td>
+    <td class="c1 entrada"><input type="text" data-f="emp" inputmode="decimal" placeholder="${ex?'ex.: 0,607':''}"></td>
+    <td class="c2 vazio" data-o="dens">—</td>
+    <td class="c2 destaque vazio" data-o="teor">—</td>
+    <td class="c2 destaque vazio" data-o="quil">—</td>
+    <td class="c2 vazio" data-o="fino">—</td>
+    <td class="c3 alvo"><select data-f="alvo">${
+      ALVOS.map(k=>`<option value="${k}"${k===18?' selected':''}>${k}k</option>`).join('')
+    }</select></td>
+    <td class="c3 acao vazio" data-o="add">—</td>
+    <td class="c3 vazio" data-o="final">—</td>
+    <td><button class="btn x" title="Remover linha">×</button></td>`;
+  tr.querySelector('.btn.x').onclick = ()=>{ tr.remove(); renumerar(); calcular(); };
+  tr.querySelectorAll('input,select').forEach(e=> e.addEventListener('input', calcular));
+  $('linhas').appendChild(tr);
+  return tr;
 }
 
-// escreve o valor no bloco; sem cálculo, o bloco fica apagado com aviso em vez de número
-function put(id, ok, txt){
-  const e = $(id);
-  e.textContent = ok ? txt : 'aguardando pesagem';
-  e.closest('.out').classList.toggle('vazio', !ok);
+function renumerar(){
+  [...$('linhas').rows].forEach((tr,i)=> tr.querySelector('.idx').textContent = i+1);
+  contador = $('linhas').rows.length;
 }
 
-function calc(){
+function escreve(tr, campo, texto){
+  const td = tr.querySelector(`[data-o="${campo}"]`);
+  const vazio = !texto;
+  td.innerHTML = vazio ? '—' : texto;
+  td.classList.toggle('vazio', vazio);
+}
+
+function calcular(){
   const dAu = num($('dAu').value) || 19.32;
   const dLiga = num($('dLiga').value) || 9.5;
-  const seco = num($('seco').value);
-  const b = num($('emp').value);
-  const empuxo = modo==='empuxo' ? b : (seco - b);
+  [...$('linhas').rows].forEach(tr=>{
+    const seco   = num(tr.querySelector('[data-f="seco"]').value);
+    const empuxo = num(tr.querySelector('[data-f="emp"]').value);
+    const kAlvo  = Number(tr.querySelector('[data-f="alvo"]').value);
+    const ok = isFinite(seco) && isFinite(empuxo) && seco > 0 && empuxo > 0;
+    tr.querySelectorAll('input').forEach(i=> i.classList.toggle('preenchido', i.value.trim() !== ''));
 
-  const ok = isFinite(seco) && isFinite(empuxo) && seco > 0 && empuxo > 0;
-  let dens = NaN, teor = NaN, quil = NaN, fino = NaN;
-  if (ok){
-    dens = seco / empuxo;
-    teor = Math.min(100, Math.max(0, teorPorDensidade(dens, dAu, dLiga)));
-    quil = teor * 24 / 100;
-    fino = seco * teor / 100;
-  }
-
-  put('dens', ok, fmt(dens,3));
-  put('teor', ok, fmt(teor,2) + '%');
-  put('quil', ok, fmt(quil,2));
-  put('fino', ok, fmt(fino,3));
-  $('avisoCalc').style.display = ok ? 'none' : 'block';
-
-  // alerta de medição improvável
-  const al = $('alerta');
-  if (ok && (dens > dAu + 0.5 || dens < dLiga - 0.5)){
-    al.style.display = 'flex';
-    $('alertaTxt').textContent = dens > dAu
-      ? 'Densidade acima do ouro puro — confira a pesagem (pode haver metal mais denso, como platina ou tungstênio).'
-      : 'Densidade abaixo da liga — provavelmente não é ouro ou a peça é oca / tem bolhas de ar.';
-  } else al.style.display = 'none';
-
-  // teor desejado
-  let alvoPct = num($('pctCustom').value);
-  if (!isFinite(alvoPct)){
-    const sel = document.querySelector('#chips .chip.on');
-    const kk = sel ? Number(sel.dataset.k) : 18;
-    alvoPct = (K.find(r=>r.k===kk)||{p:75}).p;
-  }
-  alvoPct = Math.min(99.9, Math.max(1, alvoPct));
-
-  const h = alvoPct/100;
-  if (ok){
-    if (teor/100 < h){
-      const add = seco * (h - teor/100) / (1 - h);   // subir teor: ouro fino 24k
-      $('acaoK').textContent = 'Adicionar OURO FINO (24k)';
-      put('acaoV', true, fmt(add,3));
-      put('pesoFinal', true, fmt(seco + add,3));
-      $('explica').textContent = `Leva ${fmt(seco,2)} g de ${fmt(teor,2)}% até ${fmt(alvoPct,2)}% (${fmt(alvoPct*24/100,1)}k).`;
-    } else {
-      const pesoFinal = fino / h;                     // baixar teor: liga
-      $('acaoK').textContent = 'Adicionar LIGA';
-      put('acaoV', true, fmt(Math.max(pesoFinal - seco, 0),3));
-      put('pesoFinal', true, fmt(pesoFinal,3));
-      $('explica').textContent = `Os ${fmt(fino,3)} g de ouro fino continuam os mesmos; só o peso total sobe até ${fmt(alvoPct,2)}% (${fmt(alvoPct*24/100,1)}k).`;
+    if (!ok){
+      ['dens','teor','quil','fino','add','final'].forEach(c=> escreve(tr,c,''));
+      tr.classList.remove('suspeita');
+      return;
     }
-  } else {
-    $('acaoK').textContent = 'Adicionar';
-    put('acaoV', false); put('pesoFinal', false);
-    $('explica').textContent = '';
-  }
 
-  // tabela de referência
-  let melhor = null, dif = Infinity;
-  const linhas = K.map(r=>{
-    const dr = densidadePorTeor(r.p, dAu, dLiga);
-    if (ok && Math.abs(dr - dens) < dif){ dif = Math.abs(dr - dens); melhor = r.k; }
-    return {...r, d:dr};
+    const dens = seco / empuxo;
+    const teor = Math.min(100, Math.max(0, teorPorDensidade(dens, dAu, dLiga)));
+    const quil = teor * 24 / 100;
+    const fino = seco * teor / 100;
+
+    const suspeita = dens > dAu + 0.5 || dens < dLiga - 0.5;
+    tr.classList.toggle('suspeita', suspeita);
+    const aviso = suspeita
+      ? `<span class="alerta" title="${dens > dAu
+          ? 'Densidade acima do ouro puro — confira a pesagem (pode haver metal mais denso, como platina ou tungstênio).'
+          : 'Densidade abaixo da liga — provavelmente não é ouro ou a peça é oca / tem bolhas de ar.'}">!</span>`
+      : '';
+
+    escreve(tr,'dens', aviso + fmt(dens,3));
+    escreve(tr,'teor', fmt(teor,2) + '%');
+    escreve(tr,'quil', fmt(quil,2) + 'k');
+    escreve(tr,'fino', fmt(fino,3));
+
+    const h = kAlvo/24;
+    let add, final, tag;
+    if (teor/100 < h){
+      add = seco * (h - teor/100) / (1 - h);   // subir o teor: ouro fino 24k
+      final = seco + add;
+      tag = '<span class="tag fino">fino</span>';
+    } else {
+      final = fino / h;                         // baixar o teor: liga
+      add = Math.max(final - seco, 0);
+      tag = '<span class="tag liga">liga</span>';
+    }
+    escreve(tr,'add', tag + fmt(add,3));
+    escreve(tr,'final', fmt(final,3));
   });
-  $('tabela').innerHTML = linhas.map(r=>
-    `<tr class="${r.k===melhor?'hit':''}"><td>${r.k}k</td><td>${fmt(r.p,2)}%</td><td>${fmt(r.d,2)}</td></tr>`
+
+  // referência de quilates (a densidade acompanha a liga configurada)
+  $('tabela').innerHTML = K.map(r=>
+    `<tr><td>${r.k}k</td><td>${fmt(r.p,2)}%</td><td>${fmt(densidadePorTeor(r.p,dAu,dLiga),2)}</td></tr>`
   ).join('');
 }
 
-['seco','emp','dAu','dLiga','pctCustom'].forEach(id=>{
-  $(id).addEventListener('input', ()=>{
-    if (id==='pctCustom' && $(id).value.trim()!=='')
-      document.querySelectorAll('#chips .chip').forEach(x=>x.classList.remove('on'));
-    calc();
-  });
-});
+$('addLinha').onclick = ()=>{
+  const tr = novaLinha();
+  tr.querySelector('[data-f="seco"]').focus();
+};
+$('limpar').onclick = ()=>{
+  $('linhas').innerHTML = '';
+  contador = 0;
+  for (let i=0;i<LINHAS_PADRAO;i++) novaLinha();
+  calcular();
+  $('linhas').rows[0].querySelector('[data-f="seco"]').focus();
+};
+['dAu','dLiga'].forEach(id=> $(id).addEventListener('input', calcular));
 
 // persistir as densidades configuradas (ignora navegadores que bloqueiam o storage)
 try {
@@ -331,8 +308,9 @@ try {
   });
 } catch(e){}
 
-calc();
-$('seco').focus();
+for (let i=0;i<LINHAS_PADRAO;i++) novaLinha();
+calcular();
+$('linhas').rows[0].querySelector('[data-f="seco"]').focus();
 </script>
 </body>
 </html>
