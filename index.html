@@ -40,9 +40,13 @@
   .field:last-child{margin-bottom:0}
   label{display:block;font-size:12px;font-weight:700;margin-bottom:4px}
   input[type=text].big{width:100%;padding:7px 10px;font-size:clamp(18px,1.8vw,24px);font-weight:700;
-       text-align:right;border:2px solid var(--line);border-radius:8px;background:#fffdf5;outline:none}
-  input[type=text].big:focus{border-color:var(--gold);background:#fffbea}
+       text-align:right;border:2px dashed #c8ced6;border-radius:8px;background:#fffdf5;outline:none}
+  input[type=text].big:focus{border-style:solid;border-color:var(--gold);background:#fffbea}
+  input[type=text].big:not(:placeholder-shown){border-style:solid;border-color:var(--gold)}
+  input::placeholder{color:#b6bcc5;font-weight:500;font-size:14px;font-style:italic}
   .hint{font-size:11px;color:var(--muted);margin-top:4px;line-height:1.3}
+  .aviso{font-size:12px;color:#8a6a00;background:var(--gold-soft);border:1px dashed #e6d493;
+         border-radius:8px;padding:8px 10px;line-height:1.35}
 
   .chips{display:flex;flex-wrap:wrap;gap:6px}
   .chip{padding:6px 12px;border:2px solid var(--line);border-radius:999px;background:#fff;
@@ -56,7 +60,8 @@
   .out{background:var(--blue-soft);border:1px solid var(--blue-line);border-radius:8px;padding:7px 10px;
        display:flex;flex-direction:column;justify-content:center;min-height:0}
   .out .k{font-size:10px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.4px}
-  .out .v{font-size:clamp(20px,2.1vw,28px);font-weight:800;line-height:1.1;margin:1px 0}
+  .out .v{font-size:clamp(20px,2.1vw,28px);font-weight:800;line-height:1.1;margin:1px 0;
+          font-variant-numeric:tabular-nums}
   .out .u{font-size:10px;color:var(--muted);font-weight:600}
   .out.hero{background:var(--gold-soft);border-color:#f0e0a8}
   .out.hero .v{color:#8a6a00}
@@ -64,6 +69,10 @@
   .out.acao .v{color:var(--green)}
   .out.warn{background:#fff4f4;border-color:#f3c9c9}
   .out.warn .v{color:#b02020;font-size:13px;font-weight:600;line-height:1.3}
+  /* estado sem cálculo: aviso no lugar do número, para não parecer valor que não carregou */
+  .out.vazio{background:#f4f6f8;border:1px dashed #dde2e8}
+  .out.vazio .k,.out.vazio .u{color:#aeb4bd}
+  .out.vazio .v{font-size:12px;font-weight:600;color:#aeb4bd;font-style:italic}
 
   /* ---------- tabela ---------- */
   table{width:100%;border-collapse:collapse;font-size:13px}
@@ -101,14 +110,15 @@
   <!-- COLUNA 1 — ENTRADAS -->
   <div class="col">
     <div class="card">
-      <h2><b>1</b> Pesagem</h2>
+      <h2><b>1</b> Pesagem — digite os dois valores</h2>
       <div class="field">
-        <label>Peso seco (g)</label>
-        <input type="text" id="seco" class="big" inputmode="decimal" placeholder="8,49">
+        <label for="seco">Digite o peso seco (g)</label>
+        <input type="text" id="seco" class="big" inputmode="decimal" placeholder="ex.: 8,49">
+        <div class="hint">Peça fora da água, na balança.</div>
       </div>
       <div class="field">
-        <label id="lb2">Empuxo (g)</label>
-        <input type="text" id="emp" class="big" inputmode="decimal" placeholder="0,607">
+        <label id="lb2" for="emp">Digite o empuxo (g)</label>
+        <input type="text" id="emp" class="big" inputmode="decimal" placeholder="ex.: 0,607">
         <div class="chips" style="margin-top:7px">
           <span class="chip sm on" data-modo="empuxo">Empuxo</span>
           <span class="chip sm" data-modo="agua">Peso na água</span>
@@ -130,6 +140,9 @@
   <div class="col">
     <div class="card">
       <h2><b>2</b> Resultado da peça</h2>
+      <div class="aviso" id="avisoCalc" style="margin-bottom:10px">
+        Preencha o peso seco e o empuxo ao lado — o cálculo aparece aqui na hora.
+      </div>
       <div class="tiles">
         <div class="out"><div class="k">Densidade</div><div class="v" id="dens">—</div><div class="u">g/cm³</div></div>
         <div class="out hero"><div class="k">Teor estimado</div><div class="v" id="teor">—</div><div class="u">% de ouro</div></div>
@@ -221,6 +234,13 @@ function densidadePorTeor(p, dAu, dLiga){
   return 1 / (x/dAu + (1-x)/dLiga);
 }
 
+// escreve o valor no bloco; sem cálculo, o bloco fica apagado com aviso em vez de número
+function put(id, ok, txt){
+  const e = $(id);
+  e.textContent = ok ? txt : 'aguardando pesagem';
+  e.closest('.out').classList.toggle('vazio', !ok);
+}
+
 function calc(){
   const dAu = num($('dAu').value) || 19.32;
   const dLiga = num($('dLiga').value) || 9.5;
@@ -237,10 +257,11 @@ function calc(){
     fino = seco * teor / 100;
   }
 
-  $('dens').textContent = fmt(dens,3);
-  $('teor').textContent = ok ? fmt(teor,2) + '%' : '—';
-  $('quil').textContent = ok ? fmt(quil,2) : '—';
-  $('fino').textContent = fmt(fino,3);
+  put('dens', ok, fmt(dens,3));
+  put('teor', ok, fmt(teor,2) + '%');
+  put('quil', ok, fmt(quil,2));
+  put('fino', ok, fmt(fino,3));
+  $('avisoCalc').style.display = ok ? 'none' : 'block';
 
   // alerta de medição improvável
   const al = $('alerta');
@@ -265,18 +286,20 @@ function calc(){
     if (teor/100 < h){
       const add = seco * (h - teor/100) / (1 - h);   // subir teor: ouro fino 24k
       $('acaoK').textContent = 'Adicionar OURO FINO (24k)';
-      $('acaoV').textContent = fmt(add,3);
-      $('pesoFinal').textContent = fmt(seco + add,3);
+      put('acaoV', true, fmt(add,3));
+      put('pesoFinal', true, fmt(seco + add,3));
       $('explica').textContent = `Leva ${fmt(seco,2)} g de ${fmt(teor,2)}% até ${fmt(alvoPct,2)}% (${fmt(alvoPct*24/100,1)}k).`;
     } else {
       const pesoFinal = fino / h;                     // baixar teor: liga
       $('acaoK').textContent = 'Adicionar LIGA';
-      $('acaoV').textContent = fmt(Math.max(pesoFinal - seco, 0),3);
-      $('pesoFinal').textContent = fmt(pesoFinal,3);
+      put('acaoV', true, fmt(Math.max(pesoFinal - seco, 0),3));
+      put('pesoFinal', true, fmt(pesoFinal,3));
       $('explica').textContent = `Os ${fmt(fino,3)} g de ouro fino continuam os mesmos; só o peso total sobe até ${fmt(alvoPct,2)}% (${fmt(alvoPct*24/100,1)}k).`;
     }
   } else {
-    $('acaoV').textContent = '—'; $('pesoFinal').textContent = '—'; $('explica').textContent = '';
+    $('acaoK').textContent = 'Adicionar';
+    put('acaoV', false); put('pesoFinal', false);
+    $('explica').textContent = '';
   }
 
   // tabela de referência
