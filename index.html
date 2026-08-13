@@ -1,0 +1,314 @@
+﻿<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow, noarchive">
+<title>Calculadora de Teor de Ouro</title>
+<style>
+  :root{
+    --bg:#eef1f5; --card:#fff; --line:#dbe0e6; --txt:#1f2328; --muted:#6b7280;
+    --gold:#c9a227; --gold-soft:#fff8e1; --blue-soft:#eaf3fd; --blue-line:#cfe3fa;
+    --green:#0f7b3f; --green-soft:#e7f6ec; --green-line:#bfe3cc;
+  }
+  *{box-sizing:border-box}
+  html,body{height:100%}
+  body{margin:0;padding:10px;background:var(--bg);color:var(--txt);overflow:hidden;
+       font:16px/1.35 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;
+       display:flex;flex-direction:column;gap:8px}
+
+  /* ---------- topo ---------- */
+  header{display:flex;align-items:center;gap:16px;flex-wrap:wrap;padding:0 4px}
+  header h1{font-size:17px;margin:0;white-space:nowrap}
+  header .sub{color:var(--muted);font-size:12px;flex:1;min-width:120px}
+  .cfg{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--muted)}
+  .cfg input{width:64px;padding:5px 6px;font-size:13px;font-weight:600;text-align:right;
+             border:1px solid var(--line);border-radius:6px;background:#fff}
+
+  /* ---------- grade principal ---------- */
+  main{min-height:0;display:grid;gap:10px;align-items:start;
+       grid-template-columns:minmax(220px,1fr) minmax(340px,1.4fr) minmax(260px,1fr)}
+  .col{display:flex;flex-direction:column;gap:10px;min-height:0}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:10px;
+        display:flex;flex-direction:column;min-height:0}
+  .card h2{font-size:11px;text-transform:uppercase;letter-spacing:.6px;color:var(--muted);
+           margin:0 0 8px;display:flex;gap:6px;align-items:center}
+  .card h2 b{color:var(--gold)}
+
+  /* ---------- entradas ---------- */
+  .field{margin-bottom:10px}
+  .field:last-child{margin-bottom:0}
+  label{display:block;font-size:12px;font-weight:700;margin-bottom:4px}
+  input[type=text].big{width:100%;padding:7px 10px;font-size:clamp(18px,1.8vw,24px);font-weight:700;
+       text-align:right;border:2px solid var(--line);border-radius:8px;background:#fffdf5;outline:none}
+  input[type=text].big:focus{border-color:var(--gold);background:#fffbea}
+  .hint{font-size:11px;color:var(--muted);margin-top:4px;line-height:1.3}
+
+  .chips{display:flex;flex-wrap:wrap;gap:6px}
+  .chip{padding:6px 12px;border:2px solid var(--line);border-radius:999px;background:#fff;
+        font-size:14px;font-weight:700;cursor:pointer;user-select:none;white-space:nowrap}
+  .chip:hover{border-color:#c3c9d1}
+  .chip.on{border-color:var(--gold);background:var(--gold-soft);color:#7a5c00}
+  .chip.sm{font-size:12px;padding:4px 10px;font-weight:600}
+
+  /* ---------- saídas ---------- */
+  .tiles{display:grid;grid-template-columns:1fr 1fr;gap:8px;min-height:0}
+  .out{background:var(--blue-soft);border:1px solid var(--blue-line);border-radius:8px;padding:7px 10px;
+       display:flex;flex-direction:column;justify-content:center;min-height:0}
+  .out .k{font-size:10px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.4px}
+  .out .v{font-size:clamp(20px,2.1vw,28px);font-weight:800;line-height:1.1;margin:1px 0}
+  .out .u{font-size:10px;color:var(--muted);font-weight:600}
+  .out.hero{background:var(--gold-soft);border-color:#f0e0a8}
+  .out.hero .v{color:#8a6a00}
+  .out.acao{background:var(--green-soft);border-color:var(--green-line)}
+  .out.acao .v{color:var(--green)}
+  .out.warn{background:#fff4f4;border-color:#f3c9c9}
+  .out.warn .v{color:#b02020;font-size:13px;font-weight:600;line-height:1.3}
+
+  /* ---------- tabela ---------- */
+  table{width:100%;border-collapse:collapse;font-size:13px}
+  th,td{padding:4px 6px;border-bottom:1px solid #eef0f3;text-align:right}
+  th:first-child,td:first-child{text-align:left}
+  th{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.4px}
+  tr.hit td{background:var(--gold-soft);font-weight:800}
+  tr:last-child td{border-bottom:0}
+
+  /* ---------- responsivo ---------- */
+  @media(max-width:1000px){
+    body{overflow:auto;height:auto}
+    main{grid-template-columns:1fr}
+  }
+  @media(max-height:600px){
+    .out .v{font-size:20px}
+    input[type=text].big{font-size:18px;padding:6px 9px}
+    .card{padding:8px}
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Teor de Ouro</h1>
+  <span class="sub">Pesagem hidrostática · densidade → teor → correção de liga</span>
+  <div class="cfg">
+    <span>ρ ouro puro</span><input type="text" id="dAu" value="19,32">
+    <span>ρ liga</span><input type="text" id="dLiga" value="9,5">
+  </div>
+</header>
+
+<main>
+
+  <!-- COLUNA 1 — ENTRADAS -->
+  <div class="col">
+    <div class="card">
+      <h2><b>1</b> Pesagem</h2>
+      <div class="field">
+        <label>Peso seco (g)</label>
+        <input type="text" id="seco" class="big" inputmode="decimal" placeholder="8,49">
+      </div>
+      <div class="field">
+        <label id="lb2">Empuxo (g)</label>
+        <input type="text" id="emp" class="big" inputmode="decimal" placeholder="0,607">
+        <div class="chips" style="margin-top:7px">
+          <span class="chip sm on" data-modo="empuxo">Empuxo</span>
+          <span class="chip sm" data-modo="agua">Peso na água</span>
+        </div>
+        <div class="hint" id="hint2">Empuxo = peso seco − peso submerso.</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Referência</h2>
+      <table>
+        <thead><tr><th>k</th><th>Teor</th><th>ρ aprox.</th></tr></thead>
+        <tbody id="tabela"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- COLUNA 2 — RESULTADO -->
+  <div class="col">
+    <div class="card">
+      <h2><b>2</b> Resultado da peça</h2>
+      <div class="tiles">
+        <div class="out"><div class="k">Densidade</div><div class="v" id="dens">—</div><div class="u">g/cm³</div></div>
+        <div class="out hero"><div class="k">Teor estimado</div><div class="v" id="teor">—</div><div class="u">% de ouro</div></div>
+        <div class="out hero"><div class="k">Quilates</div><div class="v" id="quil">—</div><div class="u">k</div></div>
+        <div class="out"><div class="k">Ouro fino atual</div><div class="v" id="fino">—</div><div class="u">gramas</div></div>
+      </div>
+      <div id="alerta" class="out warn" style="display:none;margin-top:10px">
+        <div class="k">Atenção</div><div class="v" id="alertaTxt"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- COLUNA 3 — CORREÇÃO -->
+  <div class="col">
+    <div class="card">
+      <h2><b>3</b> Teor desejado</h2>
+      <div class="chips" id="chips"></div>
+      <div style="display:flex;align-items:center;gap:8px;margin:8px 0 12px">
+        <span class="hint" style="margin:0">ou %:</span>
+        <input type="text" id="pctCustom" inputmode="decimal" placeholder="ex: 60"
+               style="width:80px;padding:6px 8px;font-size:15px;font-weight:700;text-align:right;
+                      border:2px solid var(--line);border-radius:8px;outline:none">
+      </div>
+      <div class="tiles" style="grid-template-columns:1fr">
+        <div class="out acao"><div class="k" id="acaoK">Adicionar</div><div class="v" id="acaoV">—</div><div class="u">gramas</div></div>
+        <div class="out"><div class="k">Peso final da peça</div><div class="v" id="pesoFinal">—</div><div class="u">gramas</div></div>
+      </div>
+      <div class="hint" id="explica" style="margin-top:8px"></div>
+    </div>
+  </div>
+
+</main>
+
+<script>
+const K = [
+  {k:24, p:100},
+  {k:22, p:91.66},
+  {k:20, p:83.33},
+  {k:18, p:75},
+  {k:16, p:66.66},
+  {k:14, p:58.33},
+  {k:12, p:50},
+  {k:10, p:41.66},
+];
+const CHIPS = [22,18,16,14,12];
+
+const $ = id => document.getElementById(id);
+const num = v => { const n = parseFloat(String(v).replace(/\s/g,'').replace(',','.')); return isFinite(n) ? n : NaN; };
+const fmt = (n,d=2) => isFinite(n) ? n.toLocaleString('pt-BR',{minimumFractionDigits:d,maximumFractionDigits:d}) : '—';
+
+let modo = 'empuxo';
+
+// chips de quilate
+CHIPS.forEach(k=>{
+  const c = document.createElement('span');
+  c.className = 'chip' + (k===18?' on':'');
+  c.textContent = k + 'k';
+  c.dataset.k = k;
+  c.onclick = ()=>{
+    document.querySelectorAll('#chips .chip').forEach(x=>x.classList.remove('on'));
+    c.classList.add('on');
+    $('pctCustom').value = '';
+    calc();
+  };
+  $('chips').appendChild(c);
+});
+
+// alternar empuxo / peso na água
+document.querySelectorAll('.chip[data-modo]').forEach(c=>{
+  c.onclick = ()=>{
+    document.querySelectorAll('.chip[data-modo]').forEach(x=>x.classList.remove('on'));
+    c.classList.add('on');
+    modo = c.dataset.modo;
+    $('lb2').textContent = modo==='empuxo' ? 'Empuxo (g)' : 'Peso na água (g)';
+    $('hint2').textContent = modo==='empuxo'
+      ? 'Empuxo = peso seco − peso submerso.'
+      : 'Peça submersa em água. O empuxo é calculado automaticamente.';
+    $('emp').placeholder = modo==='empuxo' ? '0,607' : '7,883';
+    calc();
+  };
+});
+
+function teorPorDensidade(d, dAu, dLiga){
+  // modelo de mistura por volume: 1/d = x/dAu + (1-x)/dLiga
+  return ((1/dLiga - 1/d) / (1/dLiga - 1/dAu)) * 100;
+}
+function densidadePorTeor(p, dAu, dLiga){
+  const x = p/100;
+  return 1 / (x/dAu + (1-x)/dLiga);
+}
+
+function calc(){
+  const dAu = num($('dAu').value) || 19.32;
+  const dLiga = num($('dLiga').value) || 9.5;
+  const seco = num($('seco').value);
+  const b = num($('emp').value);
+  const empuxo = modo==='empuxo' ? b : (seco - b);
+
+  const ok = isFinite(seco) && isFinite(empuxo) && seco > 0 && empuxo > 0;
+  let dens = NaN, teor = NaN, quil = NaN, fino = NaN;
+  if (ok){
+    dens = seco / empuxo;
+    teor = Math.min(100, Math.max(0, teorPorDensidade(dens, dAu, dLiga)));
+    quil = teor * 24 / 100;
+    fino = seco * teor / 100;
+  }
+
+  $('dens').textContent = fmt(dens,3);
+  $('teor').textContent = ok ? fmt(teor,2) + '%' : '—';
+  $('quil').textContent = ok ? fmt(quil,2) : '—';
+  $('fino').textContent = fmt(fino,3);
+
+  // alerta de medição improvável
+  const al = $('alerta');
+  if (ok && (dens > dAu + 0.5 || dens < dLiga - 0.5)){
+    al.style.display = 'flex';
+    $('alertaTxt').textContent = dens > dAu
+      ? 'Densidade acima do ouro puro — confira a pesagem (pode haver metal mais denso, como platina ou tungstênio).'
+      : 'Densidade abaixo da liga — provavelmente não é ouro ou a peça é oca / tem bolhas de ar.';
+  } else al.style.display = 'none';
+
+  // teor desejado
+  let alvoPct = num($('pctCustom').value);
+  if (!isFinite(alvoPct)){
+    const sel = document.querySelector('#chips .chip.on');
+    const kk = sel ? Number(sel.dataset.k) : 18;
+    alvoPct = (K.find(r=>r.k===kk)||{p:75}).p;
+  }
+  alvoPct = Math.min(99.9, Math.max(1, alvoPct));
+
+  const h = alvoPct/100;
+  if (ok){
+    if (teor/100 < h){
+      const add = seco * (h - teor/100) / (1 - h);   // subir teor: ouro fino 24k
+      $('acaoK').textContent = 'Adicionar OURO FINO (24k)';
+      $('acaoV').textContent = fmt(add,3);
+      $('pesoFinal').textContent = fmt(seco + add,3);
+      $('explica').textContent = `Leva ${fmt(seco,2)} g de ${fmt(teor,2)}% até ${fmt(alvoPct,2)}% (${fmt(alvoPct*24/100,1)}k).`;
+    } else {
+      const pesoFinal = fino / h;                     // baixar teor: liga
+      $('acaoK').textContent = 'Adicionar LIGA';
+      $('acaoV').textContent = fmt(Math.max(pesoFinal - seco, 0),3);
+      $('pesoFinal').textContent = fmt(pesoFinal,3);
+      $('explica').textContent = `Os ${fmt(fino,3)} g de ouro fino continuam os mesmos; só o peso total sobe até ${fmt(alvoPct,2)}% (${fmt(alvoPct*24/100,1)}k).`;
+    }
+  } else {
+    $('acaoV').textContent = '—'; $('pesoFinal').textContent = '—'; $('explica').textContent = '';
+  }
+
+  // tabela de referência
+  let melhor = null, dif = Infinity;
+  const linhas = K.map(r=>{
+    const dr = densidadePorTeor(r.p, dAu, dLiga);
+    if (ok && Math.abs(dr - dens) < dif){ dif = Math.abs(dr - dens); melhor = r.k; }
+    return {...r, d:dr};
+  });
+  $('tabela').innerHTML = linhas.map(r=>
+    `<tr class="${r.k===melhor?'hit':''}"><td>${r.k}k</td><td>${fmt(r.p,2)}%</td><td>${fmt(r.d,2)}</td></tr>`
+  ).join('');
+}
+
+['seco','emp','dAu','dLiga','pctCustom'].forEach(id=>{
+  $(id).addEventListener('input', ()=>{
+    if (id==='pctCustom' && $(id).value.trim()!=='')
+      document.querySelectorAll('#chips .chip').forEach(x=>x.classList.remove('on'));
+    calc();
+  });
+});
+
+// persistir as densidades configuradas (ignora navegadores que bloqueiam o storage)
+try {
+  ['dAu','dLiga'].forEach(id=>{
+    const s = localStorage.getItem(id); if (s) $(id).value = s;
+    $(id).addEventListener('input', ()=>{ try{ localStorage.setItem(id, $(id).value); }catch(e){} });
+  });
+} catch(e){}
+
+calc();
+$('seco').focus();
+</script>
+</body>
+</html>
